@@ -1,0 +1,687 @@
+<?php
+require_once('../include/class.phpmailer.php');
+require_once('../include/AimEnterprisePage.php');
+include("../include/class.smtp.php");
+
+$page = new AimEnterprisePage('pic',
+  'Establishing Direct Federation with AIM',
+  'Contact form',
+  'initContactForm()');
+
+$page->renderHeader();
+
+
+$environment = 'dev';
+
+switch($environment) {
+    case 'prod':
+        $to = "AIM_Assurance@teamaol.com";
+        $toAlias = "Enterprise AIM Partner Support";
+        $from = "contact.form@aimenterprise.aol.com";
+        $fromAlias = "AIM Enterprise Contact Form";
+        $smtpHost = "postman.mx.aol.com";
+        $subject = "Submission from aimenterprise.aol.com Contact Us form";
+        $salesforceUrl = "https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+        $key = "00Di0000000Y7lZ";
+        $textId = "00Ni000000AQxKp";
+        $captchaImageUrl = "https://captcha.aol.com/captcha/image?animation=no";
+        $captchaAudioUrl = "https://captcha.aol.com/captcha/audio?reference=";
+        $captchaVerifyUrl = "https://captcha.aol.com/captcha/verify?reference=";
+        break;
+    
+    case 'qa':
+        $to = "darshan.hegde@teamaol.com";
+        $toAlias = "Enterprise AIM Partner Support";
+        $from = "contact.form@aimenterprise.aol.com";
+        $fromAlias = "AIM Enterprise Contact Form";
+        $smtpHost = "postman.mx.aol.com";
+        $subject = "Submission from aimenterprise.aol.com Contact Us form";
+        $salesforceUrl = "https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+        $key = "00Df0000002G7cO";
+        $textId = "00Ni000000AQxKp";
+        $captchaImageUrl = "https://captcha.aol.com/captcha/image?animation=no";
+        $captchaAudioUrl = "https://captcha.aol.com/captcha/audio?reference=";
+        $captchaVerifyUrl = "https://captcha.aol.com/captcha/verify?reference=";
+        break;
+    
+    case 'dev':
+        $to = "chuck.woods@teamaol.com";
+        $toAlias = "Enterprise AIM Partner Support";
+        $from = "contact.form@aimenterprise.aol.com";
+        $fromAlias = "AIM Enterprise Contact Form";
+        $smtpHost = "postman.mx.aol.com";
+        $subject = "Submission from aimenterprise.aol.com Contact Us form";
+        $salesforceUrl = "https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+        $key = "00Df0000002G7cO";
+        $textId = "00Ni000000AQxKp";
+        $captchaImageUrl = "https://captcha.aol.com/captcha/image?animation=no";
+        $captchaAudioUrl = "https://captcha.aol.com/captcha/audio?reference=";
+        $captchaVerifyUrl = "https://captcha.aol.com/captcha/verify?reference=";
+        break;
+ }
+
+
+if (isset($_POST['firstName'])) {
+        $firstName = $_POST['firstName'];
+} else {
+        $firstName = '';
+}
+
+if (isset($_POST['lastName'])) {
+        $lastName = $_POST['lastName'];
+} else {
+        $lastName = '';
+}
+
+if (isset($_POST['title'])) {
+        $title = $_POST['title'];
+} else {
+        $title = '';
+}
+
+if (isset($_POST['company'])) {
+        $company = $_POST['company'];
+} else {
+        $company = '';
+}
+
+if (isset($_POST['email'])) {
+        $email = $_POST['email'];
+} else {
+        $email = '';
+}
+
+if (isset($_POST['phone'])) {
+        $phone = $_POST['phone'];
+} else {
+        $phone = '';
+}
+
+if (isset($_POST['comments'])) {
+        $comments = $_POST['comments'];
+} else {
+        $comments = '';
+}
+
+if (isset($_POST['domains'])) {
+        $domains = $_POST['domains'];
+} else {
+        $domains = '';
+}
+
+if (isset($_POST['edgeServer'])) {
+        $edgeServer = $_POST['edgeServer'];
+} else {
+        $edgeServer = '';
+}
+
+if (isset($_POST['aimUsers'])) {
+        $aimUsers = $_POST['aimUsers'];
+} else {
+        $aimUsers = '';
+}
+
+if (isset($_POST['industry'])) {
+        $industry = $_POST['industry'];
+} else {
+        $industry = '';
+}
+
+
+if (isset($_POST['word'])) {
+        $word = $_POST['word'];
+} else {
+        $word = '';
+}
+
+if (isset($_POST['reference'])) {
+        $captchaReference = $_POST['reference'];
+} else {
+        $captchaReference = '';
+}
+
+
+$formValuesArray = array (
+    "firstName" => "$firstName",
+    "lastName" => "$lastName",
+    "title" => "$title",
+    "company" => "$company",
+    "email" => "$email",
+    "phone" => "$phone",
+    "comments" => "$comments",
+    "domains" => "$domains",
+    "edgeServer" => "$edgeServer",
+    "aimUsers" => "$aimUsers",
+    "industry" => "$industry"
+   
+    
+);
+
+$capchaResponseText = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+   
+    $verified = array(verifyCaptcha($captchaVerifyUrl, $word, $captchaReference));
+    
+    $capchaResponseCode = $verified[0]->response->code;
+    $capchaResponseText = $verified[0]->response->text;
+    
+    if ($capchaResponseCode == '0')  {
+        
+        $salesforce = salesforcePost($salesforceUrl, $key, $textId, $firstName, $lastName, $email, $phone, $company, $title, $comments, $domains, $edgeServer, $aimUsers, $industry);
+       $mailResult = mailForm($to, $from, $toAlias, $fromAlias, $smtpHost, $subject, $firstName, $lastName, $email, $phone, $company, $title, $comments, $domains, $edgeServer, $aimUsers, $industry);
+        if(!$mailResult) {
+            echo "<strong>We're sorry, but there was an error handling your submission.  Please try again.</strong>";
+        } else {
+            echo '<h2>Thank you for your interest!</h2><p>We have received your information and we will contact you shortly to discuss next steps for federation with AOL.</p>';
+            echo '<p>If you have any questions, you might find answers in our FAQ section <a href="/pic/faq.html">here</a>.</p>';
+            echo '<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>';
+        }
+    } else {
+        if ($capchaResponseCode == '4') {
+            $capchaResponseText = "We're sorry, but the text you entered does not match the text from the image.  Please try again.";
+        }
+        displayForm($formValuesArray, $captchaImageUrl, $captchaAudioUrl, $captchaVerifyUrl, $capchaResponseText);
+    }
+
+} else {
+    displayForm($formValuesArray, $captchaImageUrl, $captchaAudioUrl, $captchaVerifyUrl, $capchaResponseText);
+}
+
+
+$page->renderFooter();
+
+
+
+function cleanString($string) {
+    /*
+     *  This function provides crude stripping of links and other components we do not want for mailing
+     *
+     *  @params string String containing the text element
+     *  @return string  Returns clean string stripped of chars
+     *  
+     */
+    $bad = array("content-type","bcc:","to:","cc:","href", "passwd", "cat", "../", "..\\", "sleep", "ini", "ld", "ID", "id", "&", "sample1@email.tst", "®", "php", "PHP", "%" );
+    return str_replace($bad,"",$string);
+}
+
+
+
+
+function verifyCaptcha($captchaVerifyUrl, $word, $captchaReference) {
+    /*
+     *  This Function lets you verify what the user typed in for the captcha response
+     *
+     *  @param string $captchaVerifyUrl   The URL for the verification service
+     *  @param string $word   The word that the user tyoed in
+     *  @param string $captchaReference  The Unique ID for this captcha event
+     *  @return array $resultArray    An array containing the response code and the response text
+     *
+     */
+    
+    $captchaVerifyUrl = $captchaVerifyUrl.$captchaReference;
+    $captchaVerifyUrl = $captchaVerifyUrl."&word=".$word;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $captchaVerifyUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+    
+    $resultArray = simplexml_load_string($result);
+    
+    return $resultArray;    
+}
+
+
+
+
+function getCaptchaAudio($captchaAudioUrl, $captchaReference) {
+    /*
+     *  This function gets the captcha Audio that matches the image
+     *
+     *  @param string $captchaAudioUrl   The URL from which we get the audio for the link
+     *  @param string $captchaReference  The unique ID for this captcha event
+     *
+     *  @return array  $resultArray->response->audio   Audio of the current captcha event
+     *
+     */
+    $captchaAudioUrl = $captchaAudioUrl.$captchaReference;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $captchaAudioUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+    
+    $resultArray = simplexml_load_string($result);
+    
+    return $resultArray->response->audio;
+    
+    
+    
+}
+
+
+function getCaptchaImage($captchaImageUrl){
+    /*
+     *  This function retrieves a new captcha image
+     *
+     *  @pram  string $captchaImageUrl   The URL from which we retrieve the new captcha image
+     *
+     *  @return  string $captchaReference    Unique ID for this captcha event
+     *  
+     */
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $captchaImageUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+
+    
+    $resultArray = simplexml_load_string($result);
+    $captchaImage = $resultArray->response->image;
+    $captchaReference = $resultArray->response->reference;
+    
+    //print_r($resultArray);
+
+    echo '<img src="data:image/jpg;base64,' . $captchaImage . '" />';
+    return $captchaReference;
+    
+}
+
+
+
+function mailForm ($to, $from, $toAlias, $fromAlias, $smtpHost, $subject, $firstName, $lastName, $email, $phone, $company, $title, $comments, $domains, $edgeServer, $aimUsers, $industry) {
+    /*
+     *  This function mails the form data
+     *
+     *   @param  string $to   Email address of the recipient (in prod, a mail list)
+     *   @param  string $from  Email address of the sender
+     *   @param  string $toAlias   Email Alias of the recipient
+     *   @param  string $fromAlias  Email Alias of the sender
+     *   @param  string $smtpHost   Name or IP of the SMTP Host for mailing
+     *   @param  string $subject    Subject of the mail message
+     *   @param  string $firstName  First or given name from the form
+     *   @param  string $lastName   Last Name, or Surname, from the form
+     *   @param  string $email      Email address from the form
+     *   @param  string $phone      Phone Number from the form
+     *   @param  string $company    Company, from the form
+     *   @param  string $title      Title, from the form
+     *   @param  string $comments   Comments, from the form
+	*   @param  string $domains    Domains the user is interested in registering
+	*   @param  string $edgeServer	The name of the SIP or XMPP edge server
+	*   @param  string $aimUsers   The anticipated number of users
+	*   @param  string $industry    The company's primary business
+	*
+     *   @return string $mail->Send()   Indicator whether mail has been sent
+     *   
+     */
+    $errorMessage = "";
+    $message = "AIM Enterprise Contact Us Form Submission\n
+We have received a post from the Contact Us form at the http://aimenterprise.aol.com site.\n
+    The form details are below.\n\n";
+    $message .= "First Name: ".cleanString($firstName)."\n";
+    $message .= "Last Name: ".cleanString($lastName)."\n";
+    $message .= "Title: ".cleanString($title)."\n";
+    $message .= "Email: ".cleanString($email)."\n";
+    $message .= "Phone:  ".cleanString($phone)."\n";
+    $message .= "Company Name: ".cleanString($company)."\n";
+    $message .= "Industry:  ".cleanString($industry)."\n";
+    $message .= "Domains:  ".cleanString($domains)."\n";
+    $message .= "Edge Server:  ".cleanString($edgeServer)."\n";
+    $message .= "Number of Users:  ".cleanString($aimUsers)."\n";
+    $message .= "Comments: \n".cleanString($comments)."\n";
+
+    $mail = new PHPMailer();
+    $mail->IsSMTP();
+    $mail->Host = $smtpHost;
+    $mail->SMTPDebug = 0;                     // Set to 2 or so for debug
+    $mail->AddAddress($to, $toAlias);
+    $mail->SetFrom($from, $fromAlias);
+    $mail->Subject = $subject;
+    $mail->MsgHTML($message);
+  
+    return $mail->Send();  
+}
+
+
+
+
+
+function salesforcePost($salesforceUrl, $key, $textId, $firstName, $lastName, $email, $phone, $company, $title, $comments, $domains, $edgeServer, $aimUsers, $industry) {
+    /*
+     *  This function does a POST to salesforce.com to create a lead from the contents of the form
+     *
+     *  @param  string  $salesforceUrl  URL to which we send the POST.  Will differ for prod vs. sandbox
+     *  @param  string  $key            Key to identify ourselves to Salesforce
+     *  @param  string  $textId         Additional value to ID ourselves to salesforce
+     *  @param  string  $firstName      User's first, or given, name from the form
+     *  @param  string  $lastName       User's Last Name or Surname from the form
+     *  @param  string  $email          User's email address, from the form
+     *  @param  string  $phone          User's phone number, from the form
+     *  @param  string  $company        User's company, from the form
+     *  @param  string  $title          User's title, from the form
+     *  @param  string  $comments       User's comments, from the form
+	*  @param  string $domains 	     Domains the user is interested in registering
+	*  @param  string $edgeServer		The name of the SIP or XMPP edge server
+	*  @param  string $aimUsers   	The anticipated number of users
+	*  @param  string $industry    	The company's primary business
+     *
+     *  @return string  $info           Indicator for result of POST
+     *
+     */
+
+    $retUrl = "http://";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $salesforceUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch,CURLOPT_POSTFIELDS, "oid=$key&retURL=$retUrl&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone&title=$title&company=$company&$textId=$comments&primaryIndustry__c=$industry&domains__c=$domains&edgeServer__c=$edgeServer&aimUsers__c=$aimUsers");
+            
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);    
+    curl_close($ch);
+    
+    
+}
+
+
+function displayForm($formValuesArray, $captchaImageUrl, $captchaAudioUrl, $captchaVerifyUrl, $captchaResponseText){
+    /*
+     *  This function draws the comment form
+     *
+     *  @param  array   $formValuesArray    Array containing previous form data; used to store data in the event the user gets the captcha phrase wrong
+     *  @param  string  $captchaImageUrl    URL from which to retrieve the captcha image
+     *  @param  string  $captchaAudioUrl    URL for the audio file associated with that image
+     *  @param  string  $captchaVerifyUrl   URL to use for captcha verification
+     *  @param  string  $captchaResponseText    Text of any error messages from captcha
+     *
+     *  @return null
+     *
+     */
+
+ 
+     
+?>
+
+  
+<div class="content">
+<h2>Microsoft Lync Customers:  How to Establish Direct Federation with AIM</h2>
+
+<p>AOL is pleased to offer Microsoft Lync customers the opportunity to continue
+their current federation with AIM and establish new federations if needed. For the
+first time, we are enabling companies with the ability to establish a direct
+relationship with AOL to provision and manage their connectivity to the AIM network.
+This will also allow you to have direct and immediate access to AIM technical support
+engineers who can quickly identify and resolve any AIM-related issues, thus making the
+transition to AOL is seamless with no disruption to your company and users.</p>
+
+<p>To get started, simply complete and submit the form below and we'll take care of the rest.
+Once we receive your information we will ensure that the transition is successful.</p>
+
+
+               
+<!--<form name="picForm" class="picForm" action="" method="POST" onSubmit="return validateContactForm(this)">
+-->
+<form name="picForm" class="picForm" action="" method="POST">                
+
+<table width="80%">
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="firstName">First Name:</label></td>
+<![endif]-->
+	<td><input type="text" name="firstName" class="name" value="<?php echo $formValuesArray['firstName']; ?>" placeholder="First Name" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="lastName">Last Name:</label></td>
+<![endif]-->
+	<td><input type="text" name="lastName" class="name" value="<?php echo $formValuesArray['lastName']; ?>" placeholder="Last Name" required /></td>
+	
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="title">Title:</label></td>
+<![endif]-->
+	<td><input type="text" name="title" class="title" value="<?php echo $formValuesArray['title']; ?>" placeholder="Title" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="company">Company:</label></td>
+<![endif]-->
+	<td><input type="text" name="company" class="company" value="<?php echo $formValuesArray['company']; ?>" placeholder="Company" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="industry">Industry:</label></td>
+<![endif]-->
+<td>
+<select name="industry" class="industry" name="industry" placeholder="Primary Industry" required>
+	<option value="" disabled selected>Company's primary industry</option>
+	<option value="Advertising & Marketing">Advertising & Marketing</option>
+     <option value="Agriculture">Agriculture</option>
+	<option value="Airlines & Aerospace(including Defense)">Airlines & Aerospace (including Defense)</option>
+     <option value="Automotive">Automotive</option>
+     <option value="Business Support & Logistics">Business Support & Logistics</option>
+     <option value="Construction, Machinery and Homes">Construction, Machinery and Homes</option>
+     <option value="Education">Education</option>
+     <option value="Entertainment & Leisure">Entertainment & Leisure</option>
+     <option value="Finance & Financial Services">Finance & Financial Services</option>
+     <option value="Food & Beverages">Food & Beverages</option>
+     <option value="Government">Government</option>
+     <option value="Healthcare & Pharmaceuticals">Healthcare & Pharmaceuticals</option>
+     <option value="Insurance">Insurance</option>
+     <option value="Manufacturing">Manufacturing</option>
+     <option value="Non-profit">Non-profit</option>
+     <option value="Retail & Consumer Durables">Retail & Consumer Durables</option>
+     <option value="Real Estate">Real Estate</option>
+     <option value="Telecommunications, Technology, Internet & Electronics">Telecommunications, Technology, Internet & Electronics</option>
+     <option value="Utilities, Energy and Extraction">Utilities, Energy and Extraction</option>
+     <option value="Other">Other</option>
+</select><br /><br />
+
+</td>
+</tr>
+
+
+
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="email">Email:</label></td>
+<![endif]-->	
+	<td><input type="email" name="email" class="email" value="<?php echo $formValuesArray['email']; ?>" placeholder="Email Address" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="phone">Phone:</label></td>
+<![endif]-->
+	<td><input type="text" name="phone" class="phone" value="<?php echo $formValuesArray['phone']; ?>" placeholder="Phone Number" required /></td>
+</tr>
+
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="domains">Domains:</label></td>
+<![endif]-->
+	<td><textarea name="domains" class="domains" placeholder="List the domains you are using, separated by commas" required><?php echo $formValuesArray['domains']; ?></textarea></td>
+</tr>
+
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="edgeServer">Edge Server:</label></td>
+<![endif]-->
+	<td><input type="text" name="edgeServer" class="edgeServer" value="<?php echo $formValuesArray['edgeServer']; ?>" placeholder="FQDN of your Edge Server" required /></td>
+</tr>
+
+
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="aimUsers">Number of Users:</label></td>
+<![endif]-->
+
+<td>
+<select id="aimUsers" name="aimUsers" class="aimUsers" placeholder="Number of Users" required>
+	<option value="" selected disabled>Number of users that require AIM access</option>
+	<option value="0-50">0-50</option>
+	<option value="51-100">51-100</option>
+    	<option value="101-150">101-150</option>
+     <option value="151-200">151-200</option>
+     <option value="201-350">201-350</option>
+     <option value="351-500">351-500</option>
+     <option value="501-750">501-750</option>
+     <option value="751-1000">751-1000</option>
+     <option value="1000+">1000+</option>
+     <option value="I am not sure">I am not sure</option>
+</select>
+<br /><br />
+</td>
+</tr>     
+
+
+
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="comments">Comments:</label></td>
+<![endif]-->
+	<td><textarea name="comments" class="comments" placeholder="Comments" required><?php echo $formValuesArray['comments']; ?></textarea></td>
+</tr>
+
+
+<tr>
+    <td><?php
+    $captchaReference = getCaptchaImage($captchaImageUrl);
+    $captchaAudio = getCaptchaAudio($captchaAudioUrl, $captchaReference);
+    echo '<a href="data:audio/mpeg;base64,' . $captchaAudio . '"><img src="/images/soundicon.jpg" height="30" width="30"></a>';
+    
+    
+
+    if (!empty($captchaResponseText)){
+        
+        echo '<br /><br />';
+        echo '<span style="color: #ff0000; font-size: 18px; font-weight: bold; ">';
+        echo 'ERROR:<br />'.$captchaResponseText;
+        echo '</span><br /><br />';
+    }
+    ?>
+    </td>
+    <td>&nbsp;</td>    
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="word">Please enter the letters and/numbers above</label></td>
+<![endif]-->
+	<td><input type="text" name="word" class="word" placeholder="Please enter the letters and/numbers above" required /></td>    
+    
+</tr>
+
+<input type="hidden" name="reference" value="<?php echo $captchaReference; ?>">
+
+<tr><td><button type="submit" class="submit-btn"></button></td><td>&nbsp;</td></tr>
+
+</table>
+<p class="disclaimer">all fields are required</p>
+
+</form>
+
+
+
+<h2>FAQ's</h2>
+ 
+<h3>Why this change and how will it affect me?</h3>
+<ul><li>Since 2005, and in partnership with AOL, Microsoft has intermediated the set-up of federation between AIM and Lync Server (and its predecessors, Office Communications Server and Live Communications Server) with its own provisioning process.  This process is being decommissioned.  Both AOL and Microsoft recognize that there is still a demand for AIM Federation with Lync, and we are working together to minimize disruption and ensure that the change will not have any impact on your daily operations.</li></ul>
+	
+<h3>Do I have to make technical changes to continue the AIM federation service?</h3>
+<ul><li>No. For domains currently federated, AOL will make all the necessary changes to complete the transition. The effort will be seamless to your operations. However, we require that you get in touch with AOL at your earliest convenience to guarantee continuity using the form above.</li></ul>
+ 
+<h3>Do I have to wait until June 2014 to transition my AIM federation service to AOL?</h3>
+<ul><li>No. It is actually better to transition your service before this date to ensure continuity as there could be a backlog of customers the closer we get to June 2014.</li></ul>
+ 
+<h3>Can I federate new domains before June 2014?</h3>
+<ul><li>Yes. We can provision additional domains once a direct relationship is established with AOL.</li></ul>
+ 
+<h3>Do I receive any added benefits from establishing a direct relationship with AOL?</h3>
+<ul><li>Yes. Our customers receive technical support from a dedicated team of enterprise engineers. In addition, AOL will soon offer other optional services that will extend the reach of federation with AIM to include federation with other companies currently connected to the AIM network.</li></ul>
+ 
+<h3>What is the process for establishing direct federation with AIM?</h3>
+<p><ul><li>Contact us using the form above. For Domains currently federated with Microsoft, the migration is seamless. There is no interruption to service.  New domains can be provisioned within 24 hours after receiving the request.</li></ul></p>
+ 
+<h3>Can AIM federation be obtained from any entity other than AOL?</h3>
+<ul><li>For Microsoft Lync customers, establishing a direct relationship with AOL is the only way to federate with AIM once our agreement with Microsoft ends in June 2014.</li></ul>
+ 
+<h3>Does obtaining federation from AOL affect my relationship with Microsoft?</h3>
+<ul><li>No. Nothing changes with respect to your current business relationship with Microsoft.</li>
+</ul>
+<p>&nbsp;</p>
+<p>If you have any questions, contact us <a href="/contact">here</a>.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+
+<?php
+}
+
+
+
+
+
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+<?php
+require_once('../include/AimEnterprisePage.php');
+$page = new AimEnterprisePage('learn-more',
+  'AIM Enterprises - Learn More',
+  'AIM Enterprise Service Offerings -- Learn More',
+  'startShow()');
+
+$content = <<<EOF
+
+<div class="featured" onMouseover="scenePaused=true" onMouseout="scenePaused=false">
+<div class="scene" id="scene0">
+<h3>Comprehensive</h3>
+<p>AIM Enterprise provides a comprehensive, reliable and responsive set of solutions for addressing your AIM support needs.</p>
+<p>We work closely with our partners to resolve your problems and we remain in communication with you throughout the resolution process.
+</p>
+</div>
+<div class="scene" id="scene1">
+<h3>Reliable</h3>
+<p>Our network enables real time communication for millions of users every day.</p>
+<p>You can depend on us to enable communications with your coworkers, customers and trading partners.  With our highly scalable network, real time monitoring and industry leading uptime, you can be confident our network will support your communication needs.
+</p>
+</div>
+<div class="scene" id="scene2">
+<h3>Responsive</h3>
+<p>We are there when you need us and even when you don't.<br><br>Our experienced team provides 24x7 support and understands the urgency of solving issues quickly and effectively.  Dedicated to serving enterprise users, you have direct access to our support staff, a guaranteed response time and the assurance that we will work with you until the issue is resolved.</p>
+</div>
+</div>
+
+<h2>AIM Assurance</h2>
+<h3>AIM Commercial Access License</h3>
+<h4>Business Use License</h4>
+<p>A Business Use License establishes a formal relationship between AOL and your company to authorize use of the AIM Network for business purposes. Without this license, AOL's only relationship is with the end user through the Terms of Service (ToS) agreement the user was required to accept in order to register for AIM.  In this case, end user issues are addressed through traditional consumer channels, which are not designed to meet the needs of enterprises.</p>
+<h4>Rate Limit Relief</h4>
+<p>AOL has implemented rate limits that constrain usage parameters to meet the needs of the average AIM consumer user and protect our network.  However, the usage thresholds are typically set too low to meet the requirements of an enterprise user resulting in periodic service interruptions.  As an AIM Assurance customer, these usage restrictions are lifted to enable you to conduct business uninterrupted.</p>
+<h4>Priority IP Protection</h4>
+<p>As a trusted partner of AOL, we will white list your company's IP addresses on our network, which entitles your users to to special privileges such as rate limit relief and exemption from mandatory client upgrades.  Additionally, with Priority IP Protection  we can monitor the aggregate messaging traffic for any anomalies that might interrupt service and be proactive in responding to potential issues.
+</p> 
+<h4>Managed Namespace</h4>
+<p>The Managed Domain Service (MDS) will enable your company to create its own AIM screen names based on your company's domain (<i>i.e.</i>, susan.jones@company.com).   We understand that using a consistent identity can create a more professional experience for your customers.  Just as importantly, MDS allows your company to manage the name space using an online tool which enables your company to create and delete screen names.  This protects you from unauthorized use of screen names created with your company's domain. An added benefit of using a managed namespace is that it can be configured to bypass the restrictions and limits typically applied to consumers.</p>
+<p>&nbsp;</p>
+
+
+<h3>Technical Services and Support</h3>
+<h4>Availability</h4>
+<p>Technical service and support is available Monday through Friday from 8:00 am to 8:00 pm Eastern Time (ET) or Monday through Sunday, 24 hours a day depending the level of support package selected. </p>
+
+<h4>Response Time</h4>
+<p>The response time between when you notify AOL of an issue and AOL acknowledging the current status of the issue is 30 minutes maximum.  Upon a customer submitting an issue via the AOL support ticketing system, an immediate acknowledgement of receipt and assignment of the issue is returned to the customer.</p>
+
+<h4>Service Level</h4>
+<p>AOL will provide support to resolve both system level and single user issues.  We will work directly with your designated technical point of contact or approved third party to resolve any system level issue impacting service.  When one of your customers has a problem with their individual AIM account, such as a forgotten password, we will provide assistance to get them back online faster than if they went through the consumer customer care channels.</p>
+
+<h4>Support Type</h4>
+<p>Depending on the support package you've selected, we offer multiple ways to communicate with AOL's technical support team.  To report an issue or submit a request, you can pick up the phone, open an IM Chat Session or enter a report into our Enterprise Ticketing System (ETS).  Once reported to AOL, your issue or request will be tracked using ETS until it is resolved and closed.  You will have 24x7 access to current issues and past records of all your company's support requests.</p>
+
+<h4>Network Availability</h4>
+<p>As an AOL partner, you will receive notifications of network events which may impact or that are currently impacting the AIM Network.  AIM Network Status Alerts are sent out from ETS via email when a network event has occurred that could impact network availability or performance. In addition, with 24x7 access to the ETS Network Maintenance Calendar, you will have visibility of our scheduled network maintenance  to allow you to plan ahead.</p>
+
+EOF;
+
+$page->render($content);
+?>

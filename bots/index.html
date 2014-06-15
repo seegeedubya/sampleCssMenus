@@ -1,0 +1,62 @@
+<?php
+require_once('../include/AimEnterprisePage.php');
+$page = new AimEnterprisePage('bots',
+  'AIM Enterprise - Services',
+  'AIM Enterprise Service Offerings',
+  'startShow()');
+
+
+$content = <<<EOF
+
+<div class="featured" onMouseover="scenePaused=true" onMouseout="scenePaused=false">
+<div class="scene" id="scene0">
+<h3>Comprehensive</h3>
+<p>Whether you want to communicate with AIM users, OCS, LCS, Lync, Sametime, Cisco Jabber or a custom solution, AIM Bots will deliver!
+</p>
+</div>
+<div class="scene" id="scene1">
+<h3>Reliable</h3>
+<p>You can depend on us to enable communications with your customers and trading partners.  With our highly scalable network, real time monitoring and industry leading uptime, you can be confident our network will support your communication needs.
+</p>
+</div>
+<div class="scene" id="scene2">
+<h3>Responsive</h3>
+<p>Our experienced team provides 24x7 support and understands the urgency of solving issues quickly and effectively*.  Dedicated to serving enterprise users, you have direct access to our support staff, a guaranteed response time and the assurance that we will work with you until the issue is resolved.</p>
+</div>
+</div>
+
+<div class="top-content">
+
+<h2>AIM Bots or Interactive Agents</h2>
+<p>An AIM Bot or interactive agent is a software application that allows you to run automated tasks over the AIM network and send and receive messages in a systematic fashion. AIM Bots can preform tasks that are both simple and structurally repetitive at a much faster rate than what is humanly possible.</p>
+
+<p>From the end user's perspective, an AIM Bot is a screen name that is always online and ready to respond to their input. Your company defines the set of rules that control the behavior of your AIM Bot and how it interacts with your customers, virtually making any type of interaction possible. Whether your customers need to request information, place an order in your systems or even subscribe to additional services; you decide what your interactive agent can do.   AIM Bots can also be programmed to automatically deliver information without being triggered by the user, making it a very powerful broadcast tool.</p>
+
+<p>A few examples of AIM Bot deployments include: phone directories, movie times finders, weather alerts, financial transaction systems, artificial intelligence agents and many more.</p>
+
+<p>Bots are fully customizable, allowing you to define icons, wallpapers, sounds and more to make sure the look and feel or your bot matches your company's brand.</p>
+
+<p>One of the most powerful features of an AIM Bot is its capacity and scalability. Leveraging the power and stability of the AIM Network, a single bot is able to handle enormous amounts of traffic without a hitch.</p>
+
+<p>An unlimited number of end users can add the AIM Bot to their Buddy List, which can potentially allow you to engage with the entire AIM Network user base. You can also limit who can add the bot, based on any criteria you select that matches your needs.
+As an AIM Enterprise customer, you receive the following features and benefits:</p>
+<p>
+<ul>
+	<li>Business use license</li>
+	<li>Priority IP Protection: ensuring your Bots can only run in the servers with the designated IPs, protecting the security of your service</li>
+	<li>Rate limits relief: allowing you to send/send large quantities of messages</li>
+	<li>Sample code and APIs to develop front end logic</li>
+	<li>Provisioning of the Bot(s) on  AIM Enterprise platform</li>
+	<li>AIM Enterprise Support: a dedicated business support team understands the needs of business users and the urgency of resolving issues quickly</li>
+</ul>
+</p>
+
+<p>The possibilities for incorporating AIM Bots into your daily business flow are endless.  From sending out timely broadcast with relevant information, to executing commands based on user input or simply exchanging of information with your customers, AIM Bots deliver results with reliability and efficiency.</p>
+
+<p>If you have any questions or would like more information about our AIM Bots offerings, please go to the <a href="/contact">Contact Us</a> page and a member of our team will be getting in touch shortly.</p> 
+
+
+EOF;
+
+$page->render($content);
+?>

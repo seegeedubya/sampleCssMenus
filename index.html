@@ -1,0 +1,49 @@
+<?php
+require_once('include/AimEnterprisePage.php');
+$page = new AimEnterprisePage('home',
+  'AIM Enterprise',
+  'AIM Enterprise Services',
+  'startShow()');
+
+
+$content = <<<EOF
+
+<div class="featured" onMouseover="scenePaused=true" onMouseout="scenePaused=false">
+
+	<div class="scene" id="scene0">
+		<h3>Comprehensive</h3>
+		<p>AIM Enterprise provides a comprehensive, reliable and responsive set of solutions for addressing your AIM support needs.</p>
+		<p>We work closely with our partners to resolve your problems and we remain in communication with you throughout the resolution process.</p>
+	</div>
+	<div class="scene" id="scene1">
+		<h3>Reliable</h3>
+		<p>Our network enables real time communication for millions of users every day.</p>
+		<p>You can depend on us to enable communications with your coworkers, customers and trading partners.  With our highly scalable network, real time monitoring and industry leading uptime, you can be confident our network will support your communication needs.</p>
+	</div>
+	<div class="scene" id="scene2">
+		<h3>Responsive</h3>
+		<p>We are there when you need us and even when you don't.<br><br>Our experienced team provides 24x7 support and understands the urgency of solving issues quickly and effectively.  Dedicated to serving enterprise users, you have direct access to our support staff, a guaranteed response time and the assurance that we will work with you until the issue is resolved.</p>
+	</div>
+</div>
+
+
+
+<h2>Our Network enables real-time communication for millions of users every day.</h2>
+<p>
+AIM Enterprise provides real-time communication solutions for the many businesses that use AOL's instant messaging system, AIM.  We help break down the communication boundaries between your company and the outside world. By leveraging the AIM Network, your company is able to extend its reach to customers and companies that use AIM and participating networks.
+</p>
+<p>
+As an extension of your network, we understand that our network must be responsive and reliable and that if issues do occur, they be resolved quickly and efficiently.  AIM Enterprise offers a range of enterprise access and support packages to meet our customers' needs.  We invite you to explore the options and learn more. <a href="/contact">Contact us</a> for additional details.
+</p>
+ 
+<div class="quote">
+<span class="left">Comprehensive, Reliable and Responsive<span class="right"></span></span>
+</div>
+<p>
+AIM Enterprise provides businesses with enterprise grade support and the confidence of knowing that they have access to the resources that maintain and improve the AIM Network every day. AIM Enterprise customers receive priority support and bypass the standard consumer support channels. Our dedicated business support team understands the needs of business users and the urgency of resolving issues quickly. Whether you use an AIM client or a product from one of our partners that integrate with AIM like Microsoft Lync<sup>&reg;</sup>, IBM Sametime<sup>&reg;</sup>; or Cisco Jabber<sup>&trade;</sup>, we have you covered.
+</p>
+
+EOF;
+
+$page->render($content);
+?>

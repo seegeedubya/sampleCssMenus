@@ -1,0 +1,187 @@
+<?php
+require_once('../include/AimEnterprisePage.php');
+$page = new AimEnterprisePage('services',
+  'AIM Enterprise - Services',
+  'AIM Enterprise Service Offerings',
+  'startShow()');
+
+
+$content = <<<EOF
+
+<div class="featured" onMouseover="scenePaused=true" onMouseout="scenePaused=false">
+<div class="scene" id="scene0">
+<h3>Comprehensive</h3>
+<p>AIM Enterprise provides a comprehensive, reliable and responsive set of solutions for addressing your AIM support needs.</p>
+<p>We work closely with our partners to resolve your problems and we remain in communication with you throughout the resolution process.
+</p>
+</div>
+<div class="scene" id="scene1">
+<h3>Reliable</h3>
+<p>Our network enables real time communication for millions of users every day.</p>
+<p>You can depend on us to enable communications with your coworkers, customers and trading partners.  With our highly scalable network, real time monitoring and industry leading uptime, you can be confident our network will support your communication needs.
+</p>
+</div>
+<div class="scene" id="scene2">
+<h3>Responsive</h3>
+<p>We are there when you need us and even when you don't.<br><br>Our experienced team provides 24x7 support and understands the urgency of solving issues quickly and effectively.  Dedicated to serving enterprise users, you have direct access to our support staff, a guaranteed response time and the assurance that we will work with you until the issue is resolved.</p>
+</div>
+</div>
+
+<div class="top-content">
+<h2>AIM Assurance</h2>
+<p>Assurance is knowing that when you call AOL for help, you will be working directly with an experienced team of engineers that is dedicated to supporting the needs of business AIM users. As an extension of your network, we understand that our network must be reliable and that if issues occur, they must be resolved quickly and efficiently. With specialized network tools and access, our engineers can check the real-time status of the various AIM systems, diagnose individual user issues down to the protocol level and help pinpoint their origin. We pride ourselves on being responsive to your needs and provide a range of support coverage options, all with guaranteed response times.</p>
+
+<p>AIM Assurance offers three support programs tailored to the unique needs of your company:
+
+<ul>
+<li><b>IM Pro</b> is for companies that use standard AIM clients or custom clients based on the standard AIM protocol (OSCAR). IM Pro includes a commercial access license for the AIM Network and standard technical services and support available M-F from 8:00 am to 8:00 pm ET.</li>
+<li><b>UC Pro</b> is for companies that connect to the AIM Network through supported Unified Communications and Collaboration (UC&C) solutions (<i>e.g.</i>, Microsoft Lync, IBM Sametime, Cisco Jabber, etc.). UC Pro includes standard technical services and support available M-F from 8:00 am to 8:00 pm ET.</li>
+<li><b>Omni Pro</b> is for mixed environments that have both standard AIM clients\custom AIM-based clients and supported UC&C solutions. Omni Pro includes a commercial access license and expanded technical services and support available 24x7x365.</li>
+</ul>
+  The following chart shows the features included in each program.</p>
+
+
+
+<a href="learnmore.html"><img src="/images/btn_learn_more.png" alt="Learn More" class="button" title="Learn more" /></a>
+</div>
+
+<hr class="bold" />
+
+<table class="service-chart" cellspacing="4px">
+<tr>
+  <th class="empty"></th>
+  <th>IM Pro</th>
+  <th>UC Pro</th>
+  <th>Omni Pro</th>
+</tr>
+<tr>
+  <td colspan="4" class="table-header">AIM Commercial Access License</td>
+</tr>
+<tr>
+  <td>Business use license (if applicable*)</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td>Relief from consumer message rate limits</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td>Priority IP Protection</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td>Managed Namespace</td>
+  <td class="supported"></td>
+  <td class="not-supported"></td>
+  <td class="not-supported"></td>
+</tr>
+<tr>
+  <td colspan="4" class="table-header">Technical Services and Support</td>
+</tr>
+<tr class="table-sub-header">
+  <td class="">Support Availability</td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Monday - Friday (8am to 8pm ET)</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="not-supported"></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">24 x 7 x 365</td>
+  <td class="not-supported"></td>
+  <td class="not-supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr class="table-sub-header">
+  <td>Response Time</td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">30 minutes (maximum)</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr class="table-sub-header">
+  <td>Service Level</td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Service Issues</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Single User Issues</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr class="table-sub-header">
+  <td>Support Type</td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Enterprise Ticketing System</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Live Chat</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Telephone</td>
+  <td class="not-supported"></td>
+  <td class="not-supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr class="table-sub-header">
+  <td>Network Availability</td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">AIM Network Status Alerts</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+<tr>
+  <td class="table-sub-cell">Network Maintenance Calendar</td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+  <td class="supported"></td>
+</tr>
+
+</table>
+
+<p class="disclaimer">
+Commercial access license is not required for applications that connect to the SIP Gateway via an approved partner.
+</p>
+
+EOF;
+
+$page->render($content);
+?>

@@ -1,0 +1,51 @@
+<?php
+require_once('../include/AimEnterprisePage.php');
+$page = new AimEnterprisePage('pic-faq',
+  'Establishing Direct Federation with AIM - FAQ',
+  'AIM Federation');
+  
+
+$content = <<<EOF
+
+
+<h2>FAQ's - Establishing Direct Federation with AIM</h2>
+<p>&nbsp;</p>
+ 
+<h3>Why this change and how will it affect me?</h3>
+<ul><li>Since 2005, and in partnership with AOL, Microsoft has intermediated the set-up of federation between AIM and Lync Server (and its predecessors, Office Communications Server and Live Communications Server) with its own provisioning process.  This process is being decommissioned.  Both AOL and Microsoft recognize that there is still a demand for AIM Federation with Lync, and we are working together to minimize disruption and ensure that the change will not have any impact on your daily operations.</li></ul>
+	
+<h3>Do I have to make technical changes to continue the AIM federation service?</h3>
+<ul><li>No. For domains currently federated, AOL will make all the necessary changes to complete the transition. The effort will be seamless to your operations. However, we require that you get in touch with AOL at your earliest convenience to guarantee continuity.</li></ul>
+ 
+<h3>Do I have to wait until June 2014 to transition my AIM federation service to AOL?</h3>
+<ul><li>No. It is actually better to transition your service before this date to ensure continuity as there could be a backlog of customers the closer we get to June 2014.</li></ul>
+ 
+<h3>Can I federate new domains before June 2014?</h3>
+<ul><li>Yes. We can provision additional domains once a direct relationship is established with AOL.</li></ul>
+ 
+<h3>Do I receive any added benefits from establishing a direct relationship with AOL?</h3>
+<ul><li>Yes. Our customers receive technical support from a dedicated team of enterprise engineers. In addition, AOL will soon offer other optional services that will extend the reach of federation with AIM to include federation with other companies currently connected to the AIM network.</li></ul>
+ 
+<h3>What is the process for establishing direct federation with AIM?</h3>
+<p><ul><li>Contact us using the form above. For Domains currently federated with Microsoft, the migration is seamless. There is no interruption to service.  New domains can be provisioned within 24 hours after receiving the request.</li></ul></p>
+ 
+<h3>Can AIM federation be obtained from any entity other than AOL?</h3>
+<ul><li>For Microsoft Lync customers, establishing a direct relationship with AOL is the only way to federate with AIM once our agreement with Microsoft ends in June 2014.</li></ul>
+ 
+<h3>Does obtaining federation from AOL affect my relationship with Microsoft?</h3>
+<ul><li>No. Nothing changes with respect to your current business relationship with Microsoft.</li>
+</ul>
+<p>&nbsp;</p>
+ 
+
+<p>If you have any questions, contact us <a href="/contact">here</a>.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+EOF;
+
+
+$page->render($content);
+?>

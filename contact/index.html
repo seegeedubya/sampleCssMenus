@@ -1,0 +1,514 @@
+<?php
+require_once('../include/class.phpmailer.php');
+require_once('../include/AimEnterprisePage.php');
+include('../include/class.smtp.php');
+
+$page = new AimEnterprisePage('contact',
+  'AIM Enterprise - Contact Us',
+  'Contact Us form',
+  'initContactForm()');
+
+$page->renderHeader();
+
+
+
+$environment = 'dev';
+
+switch($environment) {
+    case 'prod':
+        $to = "AIM_Assurance@teamaol.com";
+        $toAlias = "Enterprise AIM Partner Support";
+        $from = "contact.form@aimenterprise.aol.com";
+        $fromAlias = "AIM Enterprise Contact Form";
+        $smtpHost = "postman.mx.aol.com";
+        $subject = "Submission from aimenterprise.aol.com Contact Us form";
+        $salesforceUrl = "https://www.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+        $key = "00Di0000000Y7lZ";
+        $textId = "00Ni000000AQxKp";
+        $captchaImageUrl = "https://captcha.aol.com/captcha/image?animation=no";
+        $captchaAudioUrl = "https://captcha.aol.com/captcha/audio?reference=";
+        $captchaVerifyUrl = "https://captcha.aol.com/captcha/verify?reference=";
+        break;
+    
+    case 'qa':
+        $to = "darshan.hegde@teamaol.com";
+        $toAlias = "Enterprise AIM Partner Support";
+        $from = "contact.form@aimenterprise.aol.com";
+        $fromAlias = "AIM Enterprise Contact Form";
+        $smtpHost = "postman.mx.aol.com";
+        $subject = "Submission from aimenterprise.aol.com Contact Us form";
+        $salesforceUrl = "https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+        $key = "00Df0000002G7cO";
+        $textId = "00Ni000000AQxKp";
+        $captchaImageUrl = "https://captcha.aol.com/captcha/image?animation=no";
+        $captchaAudioUrl = "https://captcha.aol.com/captcha/audio?reference=";
+        $captchaVerifyUrl = "https://captcha.aol.com/captcha/verify?reference=";
+        break;
+    
+    case 'dev':
+        $to = "chuck.woods@teamaol.com";
+        $toAlias = "Enterprise AIM Partner Support";
+        $from = "contact.form@aimenterprise.aol.com";
+        $fromAlias = "AIM Enterprise Contact Form";
+        $smtpHost = "postman.mx.aol.com";
+        $subject = "Submission from aimenterprise.aol.com Contact Us form";
+        $salesforceUrl = "https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8";
+        $key = "00Df0000002G7cO";
+        $textId = "00Ni000000AQxKp";
+        $captchaImageUrl = "https://captcha.aol.com/captcha/image?animation=no";
+        $captchaAudioUrl = "https://captcha.aol.com/captcha/audio?reference=";
+        $captchaVerifyUrl = "https://captcha.aol.com/captcha/verify?reference=";
+        break;
+ }
+
+
+ 
+
+
+if (isset($_POST['firstName'])) {
+        $firstName = $_POST['firstName'];
+} else {
+        $firstName = '';
+}
+
+if (isset($_POST['lastName'])) {
+        $lastName = $_POST['lastName'];
+} else {
+        $lastName = '';
+}
+
+if (isset($_POST['title'])) {
+        $title = $_POST['title'];
+} else {
+        $title = '';
+}
+
+if (isset($_POST['company'])) {
+        $company = $_POST['company'];
+} else {
+        $company = '';
+}
+
+if (isset($_POST['email'])) {
+        $email = $_POST['email'];
+} else {
+        $email = '';
+}
+
+if (isset($_POST['phone'])) {
+        $phone = $_POST['phone'];
+} else {
+        $phone = '';
+}
+
+if (isset($_POST['comments'])) {
+        $comments = $_POST['comments'];
+} else {
+        $comments = '';
+}
+
+if (isset($_POST['word'])) {
+        $word = $_POST['word'];
+} else {
+        $word = '';
+}
+
+if (isset($_POST['reference'])) {
+        $captchaReference = $_POST['reference'];
+} else {
+        $captchaReference = '';
+}
+
+
+$formValuesArray = array (
+    "firstName" => "$firstName",
+    "lastName" => "$lastName",
+    "title" => "$title",
+    "company" => "$company",
+    "email" => "$email",
+    "phone" => "$phone",
+    "comments" => "$comments"
+);
+
+$capchaResponseText = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+   
+    $verified = array(verifyCaptcha($captchaVerifyUrl, $word, $captchaReference));
+    
+    $capchaResponseCode = $verified[0]->response->code;
+    $capchaResponseText = $verified[0]->response->text;
+    
+    
+    
+    
+    
+    if ($capchaResponseCode == '0')  {
+        
+        $salesforce = salesforcePost($salesforceUrl, $key, $textId, $firstName, $lastName, $email, $phone, $company, $title, $comments);
+        $mailResult = mailForm($to, $from, $toAlias, $fromAlias, $smtpHost, $subject, $firstName, $lastName, $email, $phone, $company, $title, $comments);
+        if(!$mailResult) {
+            echo "<strong>We're sorry, but there was an error handling your submission.  Please try again.</strong>";
+        } else {
+            echo "<h2>Thank You</h2>
+                <p>Thank you for your interest!</p>
+                <p>We will contact you shortly to discuss AIM Assurance and AOL's enterprise grade support programs.</p>
+                <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>";
+		}
+	} else {
+          $capchaResponseText = "We're sorry, but the text you entered does not match the text from the image.  Please try again.";
+		displayForm($formValuesArray, $captchaImageUrl, $captchaAudioUrl, $captchaVerifyUrl, $capchaResponseText);
+    }
+
+} else {
+    displayForm($formValuesArray, $captchaImageUrl, $captchaAudioUrl, $captchaVerifyUrl, $capchaResponseText);
+}
+
+
+$page->renderFooter();
+
+
+
+
+
+
+
+function verifyCaptcha($captchaVerifyUrl, $word, $captchaReference) {
+    /*
+     *  This Function lets you verify what the user typed in for the captcha response
+     *
+     *  @param string $captchaVerifyUrl   The URL for the verification service
+     *  @param string $word   The word that the user tyoed in
+     *  @param string $captchaReference  The Unique ID for this captcha event
+     *  @return array $resultArray    An array containing the response code and the response text
+     *
+     */
+    
+    $captchaVerifyUrl = $captchaVerifyUrl.$captchaReference;
+    $captchaVerifyUrl = $captchaVerifyUrl."&word=".$word;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $captchaVerifyUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+    
+    $resultArray = simplexml_load_string($result);
+    
+    return $resultArray;    
+}
+
+
+
+
+function getCaptchaAudio($captchaAudioUrl, $captchaReference) {
+    /*
+     *  This function gets the captcha Audio that matches the image
+     *
+     *  @param string $captchaAudioUrl   The URL from which we get the audio for the link
+     *  @param string $captchaReference  The unique ID for this captcha event
+     *
+     *  @return array  $resultArray->response->audio   Audio of the current captcha event
+     *
+     */
+    $captchaAudioUrl = $captchaAudioUrl.$captchaReference;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $captchaAudioUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+    
+    $resultArray = simplexml_load_string($result);
+    
+    return $resultArray->response->audio;
+    
+    
+    
+}
+
+
+function getCaptchaImage($captchaImageUrl){
+    /*
+     *  This function retrieves a new captcha image
+     *
+     *  @pram  string $captchaImageUrl   The URL from which we retrieve the new captcha image
+     *
+     *  @return  string $captchaReference    Unique ID for this captcha event
+     *  
+     */
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $captchaImageUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+
+    
+    $resultArray = simplexml_load_string($result);
+    $captchaImage = $resultArray->response->image;
+    $captchaReference = $resultArray->response->reference;
+    
+    //print_r($resultArray);
+
+    echo '<img alt="captcha" src="data:image/jpg;base64,' . $captchaImage . '" />';
+    return $captchaReference;
+    
+}
+
+
+
+function mailForm ($to, $from, $toAlias, $fromAlias, $smtpHost, $subject, $firstName, $lastName, $email, $phone, $company, $title, $comments) {
+    /*
+     *  This function mails the form data
+     *
+     *   @param  string $to   Email address of the recipient (in prod, a mail list)
+     *   @param  string $from  Email address of the sender
+     *   @param  string $toAlias   Email Alias of the recipient
+     *   @param  string $fromAlias  Email Alias of the sender
+     *   @param  string $smtpHost   Name or IP of the SMTP Host for mailing
+     *   @param  string $subject    Subject of the mail message
+     *   @param  string $firstName  First or given name from the form
+     *   @param  string $lastName   Last Name, or Surname, from the form
+     *   @param  string $email      Email address from the form
+     *   @param  string $phone      Phone Number from the form
+     *   @param  string $company    Company, from the form
+     *   @param  string $title      Title, from the form
+     *   @param  string $comments   Comments, from the form
+     *
+     *   @return string $mail->Send()   Indicator whether mail has been sent
+     *   
+     */
+    $errorMessage = "";
+    $message = "AIM Enterprise Contact Us Form Submission\n
+We have received a post from the Contact Us form at the http://aimenterprise.aol.com site.\n
+    The form details are below.\n\n";
+    $message .= "First Name: ".clean_string($firstName)."\n";
+    $message .= "Last Name: ".clean_string($lastName)."\n";
+    $message .= "Title: ".clean_string($title)."\n";
+    $message .= "Email: ".clean_string($email)."\n";
+    $message .= "Phone:  ".clean_string($phone)."\n";
+    $message .= "Company Name: ".clean_string($company)."\n";
+    $message .= "Comments: \n".clean_string($comments)."\n";
+
+    $mail = new PHPMailer();
+    $mail->IsSMTP();
+    $mail->Host = $smtpHost;
+    $mail->SMTPDebug = 0;                     // Set to 2 or so for debug
+    $mail->AddAddress($to, $toAlias);
+    $mail->SetFrom($from, $fromAlias);
+    $mail->Subject = $subject;
+    $mail->MsgHTML($message);
+  
+    return $mail->Send();  
+}
+
+
+
+
+
+function salesforcePost($salesforceUrl, $key, $textId, $firstName, $lastName, $email, $phone, $company, $title, $comments) {
+    /*
+     *  This function does a POST to salesforce.com to create a lead from the contents of the form
+     *
+     *  @param  string  $salesforceUrl  URL to which we send the POST.  Will differ for prod vs. sandbox
+     *  @param  string  $key            Key to identify ourselves to Salesforce
+     *  @param  string  $textId         Additional value to ID ourselves to salesforce
+     *  @param  string  $firstName      User's first, or given, name from the form
+     *  @param  string  $lastName       User's Last Name or Surname from the form
+     *  @param  string  $email          User's email address, from the form
+     *  @param  string  $phone          User's phone number, from the form
+     *  @param  string  $company        User's company, from the form
+     *  @param  string  $title          User's title, from the form
+     *  @param  string  $comments       User's comments, from the form
+     *
+     *  @return string  $info           Indicator for result of POST
+     *
+     */
+
+    $retUrl = "http://";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10 );
+    curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_URL, $salesforceUrl);
+    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+    curl_setopt($ch, CURLINFO_HEADER_OUT, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch,CURLOPT_POSTFIELDS, "oid=$key&retURL=$retUrl&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone&title=$title&company=$company&$textId=$comments");
+            
+    $result = curl_exec($ch);
+    $info = curl_getinfo($ch);    
+    curl_close($ch);
+    
+    
+}
+
+
+function displayForm($formValuesArray, $captchaImageUrl, $captchaAudioUrl, $captchaVerifyUrl, $captchaResponseText){
+    /*
+     *  This function draws the comment form
+     *
+     *  @param  array   $formValuesArray    Array containing previous form data; used to store data in the event the user gets the captcha phrase wrong
+     *  @param  string  $captchaImageUrl    URL from which to retrieve the captcha image
+     *  @param  string  $captchaAudioUrl    URL for the audio file associated with that image
+     *  @param  string  $captchaVerifyUrl   URL to use for captcha verification
+     *  @param  string  $captchaResponseText    Text of any error messages from captcha
+     *
+     *  @return null
+     *
+     */
+
+ 
+     
+?>
+<div id="contactIntro">
+<h2>Contact Us</h2>
+<p>
+If you have any questions or would like more information about our AIM Assurance offerings, or if you are interested in receiving enterprise grade support from AOL's dedicated team of support engineers, please complete the form below.  We will be in touch shortly.
+</p>
+</div>
+
+
+<div id="contactForm">
+                
+<!--<form name="contactForm" class="contactForm" action="" method="POST" onSubmit="return validateContactForm(this)">
+-->
+<form name="contactForm" class="contactForm" action="" method="POST">
+<table>
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="firstName">First Name:</label></td>
+<![endif]-->
+	<td><input type="text" name="firstName" class="name" value="<?php echo $formValuesArray['firstName']; ?>" placeholder="First Name" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="lastName">Last Name:</label></td>
+<![endif]-->
+	<td><input type="text" name="lastName" class="name" value="<?php echo $formValuesArray['lastName']; ?>" placeholder="Last Name" required /></td>
+	
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="title">Title:</label></td>
+<![endif]-->
+	<td><input type="text" name="title" class="title" value="<?php echo $formValuesArray['title']; ?>" placeholder="Title" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="company">Company:</label></td>
+<![endif]-->
+	<td><input type="text" name="company" class="company" value="<?php echo $formValuesArray['company']; ?>" placeholder="Company" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="email">Email:</label></td>
+<![endif]-->	
+	<td><input type="email" name="email" class="email" value="<?php echo $formValuesArray['email']; ?>" placeholder="Email Address" required /></td>
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="phone">Phone:</label></td>
+<![endif]-->
+	<td><input type="text" name="phone" class="phone" value="<?php echo $formValuesArray['phone']; ?>" placeholder="Phone Number" required /></td>
+</tr>
+
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="comments">Comments:</label></td>
+<![endif]-->
+	<td><textarea name="comments" class="comments" placeholder="Comments" required><?php echo $formValuesArray['comments']; ?></textarea></td>
+</tr>
+
+
+<tr>
+    <td><?php
+    $captchaReference = getCaptchaImage($captchaImageUrl);
+    $captchaAudio = getCaptchaAudio($captchaAudioUrl, $captchaReference);
+    echo '<a href="data:audio/mpeg;base64,' . $captchaAudio . '"><img src="/images/soundicon.jpg" height="30" width="30" alt="audio"></a>';
+    
+    
+
+    if (!empty($captchaResponseText)){
+        
+        echo '<br /><br />';
+        echo '<span style="color: #ff0000; font-size: 18px; font-weight: bold; ">';
+        echo 'ERROR:<br />'.$captchaResponseText;
+        echo '</span><br /><br />';
+    }
+    ?>
+    </td>
+    <td>&nbsp;</td>    
+</tr>
+
+<tr>
+<!--[if lt IE 10]>
+	<td><label for="word">Please enter the letters and/or numbers above</label></td>
+<![endif]-->
+	<td><input type="text" name="word" class="word" placeholder="Please enter the letters and/or numbers above" required /></td>    
+    
+</tr>
+
+<input type="hidden" name="reference" value="<?php echo $captchaReference; ?>">
+
+<tr><td><button type="submit" class="submit-btn"></button></td><td>&nbsp;</td></tr>
+</table>
+<p class="disclaimer">all fields are required</p>
+
+</form>
+</div>
+
+<div id="contactImage"><img src="../images/aolLobby.jpg" alt="AOL Lobby"></div>
+
+<?php
+}
+
+
+function clean_string($string) {
+    /*
+     *  This function provides crude stripping of links and other components we do not want for mailing
+     *
+     *  @params string String containing the text element
+     *  @return string  Returns clean string stripped of chars
+     *  
+     */
+    $bad = array("content-type","bcc:","to:","cc:","href", "passwd", "cat", "../", "..\\", "sleep", "ini", "ld", "ID", "id", "&", "sample1@email.tst", "®", "php", "PHP", "%" );
+    return str_replace($bad,"",$string);
+}
+
+
+
+?>
+
